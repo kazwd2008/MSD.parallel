@@ -14,13 +14,15 @@ RMSD.p <- function(inp, nb=0, sd=0, pt=0.999, dv=10000) {
 #    parallelization 
 #--------------------------------
 require(doParallel)
-require(foreach)
+#  with the packages foreach, iterators, parallel
+
   type <- if (exists("mcfork", mode="function")) "FORK" else "PSOCK"
     cores <- getOption("mc.cores", detectCores())
     cl <- makeCluster(cores, type=type)    
     registerDoParallel(cl)
   RNGkind("L'Ecuyer-CMRG")     
-    if (sd != 0) set.seed(sd)   
+    # if (sd != 0) set.seed(sd)   # corrected on 2022/08/08
+    if (sd != 0) clusterSetRNGStream(cl=cl, iseed=sd)
 
 #--------------------------------
 #     create orthogonal bases
